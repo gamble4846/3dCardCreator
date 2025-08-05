@@ -1,0 +1,167 @@
+<div class="app-container">
+  <div class="sidebar">
+    <nz-card class="control-panel">
+      <ng-template #title>
+        <h2>{{ title }}</h2>
+      </ng-template>
+      
+      <div class="upload-section">
+        <div class="upload-item">
+          <label>Front Image:</label>
+          <div class="file-input-container">
+            <input 
+              type="file" 
+              accept="image/*" 
+              (change)="onFrontImageUpload($event)"
+              class="file-input"
+              id="frontImageInput"
+            >
+            <label for="frontImageInput" class="file-input-label">
+              <span nz-icon nzType="upload" nzTheme="outline"></span>
+              Browse...
+            </label>
+            <span class="file-name" *ngIf="frontImage">
+              {{ frontImage.name }}
+            </span>
+          </div>
+        </div>
+
+        <div class="upload-item">
+          <label>Back Image:</label>
+          <div class="file-input-container">
+            <input 
+              type="file" 
+              accept="image/*" 
+              (change)="onBackImageUpload($event)"
+              class="file-input"
+              id="backImageInput"
+            >
+            <label for="backImageInput" class="file-input-label">
+              <span nz-icon nzType="upload" nzTheme="outline"></span>
+              Browse...
+            </label>
+            <span class="file-name" *ngIf="backImage">
+              {{ backImage.name }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dimensions-section">
+        <h3>Card Dimensions (Pixels)</h3>
+        <div class="dimension-item">
+          <label>Width:</label>
+          <nz-input-number 
+            [(ngModel)]="cardWidth" 
+            [nzStep]="1"
+            [nzPrecision]="0"
+            (ngModelChange)="onDimensionsChange()"
+            class="dimension-input"
+            nzPlaceHolder="Width (px)"
+          ></nz-input-number>
+        </div>
+        <div class="dimension-item">
+          <label>Height:</label>
+          <nz-input-number 
+            [(ngModel)]="cardHeight" 
+            [nzStep]="1"
+            [nzPrecision]="0"
+            (ngModelChange)="onDimensionsChange()"
+            class="dimension-input"
+            nzPlaceHolder="Height (px)"
+          ></nz-input-number>
+        </div>
+        <div class="dimension-item">
+          <label>Thickness:</label>
+          <nz-input-number 
+            [(ngModel)]="cardThickness" 
+            [nzStep]="1"
+            [nzPrecision]="0"
+            (ngModelChange)="onDimensionsChange()"
+            class="dimension-input"
+            nzPlaceHolder="Thickness (px)"
+          ></nz-input-number>
+        </div>
+        <div class="dimension-update">
+          <button 
+            nz-button 
+            nzType="default" 
+            nzSize="small"
+            (click)="onDimensionsChange()"
+            class="update-button"
+          >
+            <span nz-icon nzType="reload" nzTheme="outline"></span>
+            Update Card
+          </button>
+        </div>
+      </div>
+
+      <div class="export-section">
+        <button 
+          nz-button 
+          nzType="primary" 
+          nzSize="large"
+          class="export-button"
+          (click)="exportGLB()"
+          [nzLoading]="isExporting"
+          [disabled]="!frontImage && !backImage"
+        >
+          <span nz-icon nzType="download" nzTheme="outline"></span>
+          EXPORT GLB
+        </button>
+      </div>
+    </nz-card>
+  </div>
+
+  <div class="main-content">
+    <div class="renderer-container" #rendererContainer>
+      <nz-spin [nzSpinning]="isLoading" nzTip="Loading 3D scene...">
+        <!-- Three.js renderer will be inserted here -->
+      </nz-spin>
+      
+      <!-- Zoom Controls -->
+      <div class="zoom-controls">
+        <button 
+          nz-button 
+          nzType="default" 
+          nzSize="small"
+          (click)="zoomIn()"
+          class="zoom-button"
+          title="Zoom In"
+        >
+          <nz-icon nzType="zoom-in" nzTheme="outline" />
+        </button>
+        <button 
+          nz-button 
+          nzType="default" 
+          nzSize="small"
+          (click)="zoomOut()"
+          class="zoom-button"
+          title="Zoom Out"
+        >
+          <nz-icon nzType="zoom-out" nzTheme="outline" />
+        </button>
+        <button 
+          nz-button 
+          nzType="default" 
+          nzSize="small"
+          (click)="fitCardToScreen()"
+          class="zoom-button"
+          title="Fit to Screen"
+        >
+          <nz-icon nzType="fullscreen" nzTheme="outline" />
+        </button>
+        <button 
+          nz-button 
+          nzType="default" 
+          nzSize="small"
+          (click)="resetZoom()"
+          class="zoom-button"
+          title="Reset Zoom"
+        >
+          <nz-icon nzType="reload" nzTheme="outline" />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
