@@ -52,7 +52,7 @@ export class AppComponent implements OnInit, OnDestroy {
   // Card dimensions (in pixels - will be converted to Three.js units)
   cardWidth: number = 1080;   // Width in pixels
   cardHeight: number = 1920;  // Height in pixels
-  cardThickness: number = 5;  // Thickness in pixels
+  cardThickness: number = 10;  // Thickness in pixels
 
   // Camera zoom properties
   private minZoom: number = 0.5;
@@ -135,7 +135,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private onMouseWheel(event: WheelEvent) {
     event.preventDefault();
 
-    const zoomSpeed = 0.1;
+    const zoomSpeed = 0.5; // Increased from 0.1 to 0.5 for faster zooming
     const delta = event.deltaY > 0 ? 1 : -1;
 
     this.currentZoom += delta * zoomSpeed;
