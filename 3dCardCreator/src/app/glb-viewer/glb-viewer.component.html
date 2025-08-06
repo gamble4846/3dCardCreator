@@ -1,0 +1,51 @@
+<div class="glb-viewer-container">
+  <div class="input-section">
+    <nz-input-group [nzSuffix]="suffixTemplate">
+      <input 
+        nz-input 
+        placeholder="Enter GLB file URL" 
+        [(ngModel)]="glbUrl"
+        (keyup.enter)="loadGlbModel()"
+      />
+    </nz-input-group>
+  </div>
+
+  <div class="controls-section">
+    <button nz-button nzType="primary" (click)="loadGlbModel()" [nzLoading]="isLoading">
+      <span nz-icon nzType="eye" nzTheme="outline"></span>
+      Load Model
+    </button>
+    
+    <button nz-button nzType="default" (click)="resetCamera()" [disabled]="!currentModel">
+      <span nz-icon nzType="reload" nzTheme="outline"></span>
+      Reset Camera
+    </button>
+    
+    <button nz-button nzType="default" (click)="toggleWireframe()" [disabled]="!currentModel">
+      <span nz-icon nzType="border" nzTheme="outline"></span>
+      Toggle Wireframe
+    </button>
+  </div>
+
+  <div class="error-section" *ngIf="errorMessage">
+    <nz-alert 
+      nzType="error" 
+      [nzMessage]="errorMessage"
+      nzShowIcon
+    ></nz-alert>
+  </div>
+
+  <div class="viewer-section">
+    <div class="renderer-container" #rendererContainer>
+      <div class="loading-overlay" *ngIf="isLoading">
+        <nz-spin nzSize="large">
+          <div class="loading-text">Loading GLB model...</div>
+        </nz-spin>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #suffixTemplate>
+  <span nz-icon nzType="link" nzTheme="outline"></span>
+</ng-template> 

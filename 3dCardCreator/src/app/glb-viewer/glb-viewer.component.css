@@ -1,0 +1,178 @@
+.glb-viewer-container {
+  height: 100vh;
+  background: #000000;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+}
+
+.input-section {
+  flex-shrink: 0;
+}
+
+.input-section nz-input-group {
+  width: 100%;
+  max-width: 600px;
+}
+
+.input-section ::ng-deep .ant-input {
+  background: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4) !important;
+  color: black !important;
+  border-radius: 8px !important;
+}
+
+.input-section ::ng-deep .ant-input:focus {
+  border-color: #1890ff !important;
+  border-bottom: 2px solid #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+  background: white !important;
+  color: black !important;
+}
+
+.input-section ::ng-deep .ant-input::placeholder {
+  color: #666666 !important;
+}
+
+.controls-section {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.controls-section button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.controls-section ::ng-deep .ant-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border-radius: 8px !important;
+}
+
+.controls-section ::ng-deep .ant-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.controls-section ::ng-deep .ant-btn-primary {
+  background: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+.controls-section ::ng-deep .ant-btn-primary:hover {
+  background: #40a9ff !important;
+  border-color: #40a9ff !important;
+}
+
+.controls-section ::ng-deep .ant-btn:disabled {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.error-section {
+  flex-shrink: 0;
+}
+
+.error-section ::ng-deep .ant-alert {
+  background: rgba(255, 77, 79, 0.1) !important;
+  border: 1px solid rgba(255, 77, 79, 0.3) !important;
+  color: #ff4d4f !important;
+  border-radius: 8px !important;
+}
+
+.viewer-section {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.renderer-container {
+  width: 100%;
+  height: calc(100% - 100px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  background: #000000;
+}
+
+.renderer-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.loading-text {
+  margin-top: 10px;
+  color: white;
+  font-size: 14px;
+}
+
+.instructions {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #1890ff;
+}
+
+.instructions h4 {
+  margin: 0 0 10px 0;
+  color: #1890ff;
+  font-size: 16px;
+}
+
+.instructions ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.instructions li {
+  margin-bottom: 5px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .glb-viewer-container {
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .controls-section {
+    flex-direction: column;
+  }
+
+  .controls-section button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .renderer-container {
+    height: 250px;
+  }
+}

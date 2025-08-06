@@ -1,332 +1,102 @@
 .app-container {
-  display: flex;
-  flex-direction: column;
   height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: #000000;
   color: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 350px;
+.full-height {
   height: 100vh;
-  z-index: 1000;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.8);
+}
+
+.app-header {
+  background: rgba(0, 0, 0, 0.9) !important;
   backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.control-panel {
-  background: rgba(45, 45, 45, 0.9) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-}
-
-.control-panel ::ng-deep .ant-card-head {
-  background: transparent !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-  padding: 20px 24px 16px !important;
+  padding: 0 !important;
+  height: 64px !important;
+  line-height: 64px !important;
 }
 
-.control-panel ::ng-deep .ant-card-head-title {
-  color: white !important;
-  font-size: 24px !important;
-  font-weight: 600 !important;
-}
-
-.control-panel ::ng-deep .ant-card-body {
-  padding: 24px !important;
-  background: transparent !important;
-}
-
-.upload-section {
-  margin-bottom: 30px;
-}
-
-.upload-item {
-  margin-bottom: 20px;
-}
-
-.upload-item label {
-  display: block;
-  margin-bottom: 8px;
-  color: #e0e0e0;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.file-input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 8px 12px;
-  transition: all 0.3s ease;
-}
-
-.file-input-container:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.file-input {
-  position: absolute;
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
-
-.file-input-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #1890ff;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 8px 16px;
-  background: rgba(24, 144, 255, 0.1);
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(24, 144, 255, 0.3);
-}
-
-.file-input-label:hover {
-  background: rgba(24, 144, 255, 0.2);
-  border-color: rgba(24, 144, 255, 0.5);
-}
-
-.file-name {
-  margin-left: 12px;
-  color: #e0e0e0;
-  font-size: 13px;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dimensions-section {
-  margin-bottom: 30px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dimensions-section h3 {
-  margin: 0 0 15px 0;
-  color: #e0e0e0;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.dimension-item {
+.header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.dimension-item:last-child {
-  margin-bottom: 0;
-}
-
-.dimension-item label {
-  color: #e0e0e0;
-  font-weight: 500;
-  font-size: 14px;
-  min-width: 80px;
-}
-
-.dimension-input {
-  width: 120px !important;
-}
-
-.dimension-input ::ng-deep .ant-input-number-input {
-  background: white !important;
-  border: 1px solid rgba(0, 0, 0, 0.2) !important;
-  color: #333333 !important;
-  border-radius: 6px !important;
-}
-
-.dimension-input ::ng-deep .ant-input-number-input:focus {
-  border-color: #1890ff !important;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
-  background: white !important;
-}
-
-.dimension-input ::ng-deep .ant-input-number-handler-wrap {
-  background: white !important;
-  border-left: 1px solid rgba(0, 0, 0, 0.2) !important;
-}
-
-.dimension-input ::ng-deep .ant-input-number-handler {
-  color: #666666 !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-}
-
-.dimension-input ::ng-deep .ant-input-number-handler:hover {
-  background: rgba(24, 144, 255, 0.2) !important;
-}
-
-.dimension-update {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.update-button {
-  background: rgba(24, 144, 255, 0.1) !important;
-  border: 1px solid rgba(24, 144, 255, 0.3) !important;
-  color: #1890ff !important;
-  border-radius: 6px !important;
-  transition: all 0.3s ease !important;
-}
-
-.update-button:hover {
-  background: rgba(24, 144, 255, 0.2) !important;
-  border-color: rgba(24, 144, 255, 0.5) !important;
-  color: #40a9ff !important;
-}
-
-.export-section {
-  text-align: center;
-}
-
-.export-button {
-  width: 100% !important;
-  height: 48px !important;
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%) !important;
-  border: none !important;
-  border-radius: 8px !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  color: white !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
-}
-
-.export-button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4) !important;
-  background: linear-gradient(135deg, #ff7a4a 0%, #f8a23e 100%) !important;
-}
-
-.export-button:disabled {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: rgba(255, 255, 255, 0.3) !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.main-content {
-  margin-left: 350px;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.renderer-container {
-  width: 100%;
+  padding: 0 24px;
   height: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
 }
 
-.renderer-container canvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
+.app-title {
+  margin: 0;
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
 }
 
-.zoom-controls {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.nav-menu {
   display: flex;
-  flex-direction: column;
   gap: 8px;
-  z-index: 1000;
 }
 
-.zoom-button {
-  width: 40px !important;
-  height: 40px !important;
-  background: rgba(0, 0, 0, 0.7) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease !important;
-  backdrop-filter: blur(10px) !important;
-}
-
-.zoom-button:hover {
-  background: rgba(0, 0, 0, 0.8) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  transform: scale(1.05) !important;
-}
-
-.zoom-button:active {
-  transform: scale(0.95) !important;
-}
-
-/* NG-ZORRO overrides */
-::ng-deep .ant-spin-dot {
-  color: #1890ff !important;
-}
-
-::ng-deep .ant-spin-text {
-  color: white !important;
-}
-
-::ng-deep .ant-btn-primary {
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%) !important;
+.nav-button {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7) !important;
   border: none !important;
+  background: transparent !important;
+  padding: 0px 16px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
 }
 
-::ng-deep .ant-btn-primary:hover {
-  background: linear-gradient(135deg, #ff7a4a 0%, #f8a23e 100%) !important;
+.nav-button:hover {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.nav-button.active {
+  color: #1890ff !important;
+  background: rgba(24, 144, 255, 0.1) !important;
+  border-bottom: 2px solid #1890ff !important;
+}
+
+.app-content {
+  background: #000000 !important;
+  padding: 0 !important;
+  height: calc(100vh - 64px);
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-    padding: 15px;
-  }
-  
-  .main-content {
-    margin-left: 0;
-    height: 60vh;
-  }
-  
-  .app-container {
+  .header-content {
+    padding: 0 16px;
     flex-direction: column;
+    height: auto;
+    padding: 12px 16px;
   }
-}
 
-/* Loading animation */
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
+  .app-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
 
-.loading {
-  animation: pulse 2s infinite;
+  .app-header {
+    height: auto !important;
+    line-height: normal !important;
+  }
+
+  .app-content {
+    height: calc(100vh - 80px);
+  }
+
+  .nav-menu {
+    gap: 4px;
+  }
+
+  .nav-button {
+    padding: 6px 12px !important;
+    font-size: 14px !important;
+  }
 }
