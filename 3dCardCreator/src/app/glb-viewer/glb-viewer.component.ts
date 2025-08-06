@@ -14,8 +14,22 @@ import {
   EyeOutline, 
   ReloadOutline, 
   BorderOutline, 
-  LinkOutline
+  LinkOutline,
+  DeleteOutline,
+  AppstoreOutline,
+  UserOutline,
+  LeftOutline,
+  RightOutline
 } from '@ant-design/icons-angular/icons';
+
+interface LoadedModel {
+  group: THREE.Group;
+  url: string;
+  position: THREE.Vector3;
+  originalPosition: THREE.Vector3;
+}
+
+type ViewMode = 'all' | 'individual';
 
 @Component({
   selector: 'app-glb-viewer',
@@ -39,13 +53,15 @@ export class GlbViewerComponent implements OnInit {
   glbUrl: string = '';
   isLoading: boolean = false;
   errorMessage: string = '';
+  viewMode: ViewMode = 'all';
+  currentModelIndex: number = 0;
   
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
   private controls!: OrbitControls;
   private loader!: GLTFLoader;
-  public currentModel: THREE.Group | null = null;
+  public currentModels: LoadedModel[] = [];
 
   constructor(private iconService: NzIconService) {
     // Register icons
@@ -53,7 +69,12 @@ export class GlbViewerComponent implements OnInit {
       EyeOutline, 
       ReloadOutline, 
       BorderOutline, 
-      LinkOutline
+      LinkOutline,
+      DeleteOutline,
+      AppstoreOutline,
+      UserOutline,
+      LeftOutline,
+      RightOutline
     );
   }
 
@@ -142,80 +163,279 @@ export class GlbViewerComponent implements OnInit {
     this.scene.add(pointLight);
   }
 
-  loadGlbModel() {
+  loadGlbModels() {
     if (!this.glbUrl.trim()) {
-      this.errorMessage = 'Please enter a valid GLB URL';
+      this.errorMessage = 'Please enter valid GLB URLs';
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Remove previous model if exists
-    if (this.currentModel) {
-      this.scene.remove(this.currentModel);
-      this.currentModel = null;
+    // Clear existing models
+    this.clearAllModels();
+
+    // Split URLs by comma and trim whitespace
+    const urls = this.glbUrl.split(',').map(url => url.trim()).filter(url => url.length > 0);
+
+    if (urls.length === 0) {
+      this.errorMessage = 'Please enter at least one valid GLB URL';
+      this.isLoading = false;
+      return;
     }
 
-    this.loader.load(
-      this.glbUrl,
-      (gltf) => {
-        this.currentModel = gltf.scene;
-        
-        // Enable shadows for all meshes
-        this.currentModel.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            
-            // Improve material properties for better visibility
-            if (child.material) {
-              if (Array.isArray(child.material)) {
-                child.material.forEach(mat => {
-                  if (mat instanceof THREE.MeshStandardMaterial) {
-                    mat.metalness = 0.1;
-                    mat.roughness = 0.8;
-                    mat.envMapIntensity = 1.0;
-                  }
-                });
-              } else if (child.material instanceof THREE.MeshStandardMaterial) {
-                child.material.metalness = 0.1;
-                child.material.roughness = 0.8;
-                child.material.envMapIntensity = 1.0;
+    // Calculate positions for multiple models
+    const positions = this.calculateModelPositions(urls.length);
+
+    // Load all models
+    let loadedCount = 0;
+    let errorCount = 0;
+
+    urls.forEach((url, index) => {
+      this.loader.load(
+        url,
+        (gltf) => {
+          const model = gltf.scene;
+          
+          // Enable shadows for all meshes
+          model.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+              
+              // Improve material properties for better visibility
+              if (child.material) {
+                if (Array.isArray(child.material)) {
+                  child.material.forEach(mat => {
+                    if (mat instanceof THREE.MeshStandardMaterial) {
+                      mat.metalness = 0.1;
+                      mat.roughness = 0.8;
+                      mat.envMapIntensity = 1.0;
+                    }
+                  });
+                } else if (child.material instanceof THREE.MeshStandardMaterial) {
+                  child.material.metalness = 0.1;
+                  child.material.roughness = 0.8;
+                  child.material.envMapIntensity = 1.0;
+                }
               }
             }
-          }
-        });
+          });
 
-        // Center and scale the model
-        const box = new THREE.Box3().setFromObject(this.currentModel);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-        
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const scale = 2 / maxDim;
-        this.currentModel.scale.setScalar(scale);
-        
-        this.currentModel.position.sub(center.multiplyScalar(scale));
-        
-        this.scene.add(this.currentModel);
-        
-        // Reset camera position
-        this.camera.position.set(0, 0, 5);
-        this.controls.reset();
-        
-        this.isLoading = false;
-      },
-      (progress) => {
-        // Progress callback
-        console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
-      },
-      (error) => {
-        console.error('Error loading GLB:', error);
-        this.errorMessage = 'Failed to load GLB file. Please check the URL and try again.';
-        this.isLoading = false;
+          // Center and scale the model
+          const box = new THREE.Box3().setFromObject(model);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 1.5 / maxDim; // Smaller scale for multiple models
+          model.scale.setScalar(scale);
+          
+          model.position.sub(center.multiplyScalar(scale));
+          
+          // Position the model
+          model.position.add(positions[index]);
+          
+          this.scene.add(model);
+          
+          // Add to current models array
+          this.currentModels.push({
+            group: model,
+            url: url,
+            position: positions[index].clone(),
+            originalPosition: positions[index].clone()
+          });
+          
+          loadedCount++;
+          
+          // Check if all models are loaded
+          if (loadedCount + errorCount === urls.length) {
+            this.isLoading = false;
+            if (errorCount > 0) {
+              this.errorMessage = `Failed to load ${errorCount} model(s). ${loadedCount} model(s) loaded successfully.`;
+            }
+            
+            // Reset view mode and index
+            this.viewMode = 'all';
+            this.currentModelIndex = 0;
+            
+            // Adjust camera to fit all models
+            this.fitCameraToModels();
+          }
+        },
+        (progress) => {
+          // Progress callback
+          console.log(`Loading progress for ${url}:`, (progress.loaded / progress.total * 100) + '%');
+        },
+        (error) => {
+          console.error('Error loading GLB:', error);
+          errorCount++;
+          
+          // Check if all models are processed
+          if (loadedCount + errorCount === urls.length) {
+            this.isLoading = false;
+            if (loadedCount === 0) {
+              this.errorMessage = 'Failed to load all GLB files. Please check the URLs and try again.';
+            } else {
+              this.errorMessage = `Failed to load ${errorCount} model(s). ${loadedCount} model(s) loaded successfully.`;
+            }
+            
+            if (loadedCount > 0) {
+              this.fitCameraToModels();
+            }
+          }
+        }
+      );
+    });
+  }
+
+  private calculateModelPositions(count: number): THREE.Vector3[] {
+    const positions: THREE.Vector3[] = [];
+    
+    if (count === 1) {
+      positions.push(new THREE.Vector3(0, 0, 0));
+    } else if (count === 2) {
+      positions.push(new THREE.Vector3(-2, 0, 0));
+      positions.push(new THREE.Vector3(2, 0, 0));
+    } else if (count === 3) {
+      positions.push(new THREE.Vector3(-2, 0, 0));
+      positions.push(new THREE.Vector3(0, 0, 0));
+      positions.push(new THREE.Vector3(2, 0, 0));
+    } else if (count === 4) {
+      positions.push(new THREE.Vector3(-2, 1, 0));
+      positions.push(new THREE.Vector3(2, 1, 0));
+      positions.push(new THREE.Vector3(-2, -1, 0));
+      positions.push(new THREE.Vector3(2, -1, 0));
+    } else {
+      // For more than 4 models, arrange in a grid
+      const cols = Math.ceil(Math.sqrt(count));
+      const rows = Math.ceil(count / cols);
+      const spacing = 2.5;
+      
+      for (let i = 0; i < count; i++) {
+        const row = Math.floor(i / cols);
+        const col = i % cols;
+        const x = (col - (cols - 1) / 2) * spacing;
+        const y = ((rows - 1) / 2 - row) * spacing;
+        positions.push(new THREE.Vector3(x, y, 0));
       }
-    );
+    }
+    
+    return positions;
+  }
+
+  setViewMode(mode: ViewMode) {
+    this.viewMode = mode;
+    
+    if (mode === 'all') {
+      // Show all models in their original positions
+      this.currentModels.forEach((model, index) => {
+        model.group.position.copy(model.originalPosition);
+        model.group.visible = true;
+      });
+      this.fitCameraToModels();
+    } else {
+      // Show only the current model centered
+      this.showIndividualModel();
+    }
+  }
+
+  showIndividualModel() {
+    if (this.currentModels.length === 0) return;
+    
+    // Hide all models
+    this.currentModels.forEach(model => {
+      model.group.visible = false;
+    });
+    
+    // Show only the current model
+    const currentModel = this.currentModels[this.currentModelIndex];
+    currentModel.group.visible = true;
+    currentModel.group.position.set(0, 0, 0);
+    
+    // Fit camera to the individual model
+    this.fitCameraToModel(currentModel.group);
+  }
+
+  nextModel() {
+    if (this.currentModelIndex < this.currentModels.length - 1) {
+      this.currentModelIndex++;
+      this.showIndividualModel();
+    }
+  }
+
+  previousModel() {
+    if (this.currentModelIndex > 0) {
+      this.currentModelIndex--;
+      this.showIndividualModel();
+    }
+  }
+
+  private fitCameraToModels() {
+    if (this.currentModels.length === 0) return;
+
+    // Calculate bounding box of all visible models
+    const box = new THREE.Box3();
+    this.currentModels.forEach(model => {
+      if (model.group.visible) {
+        box.expandByObject(model.group);
+      }
+    });
+
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const distance = maxDim * 2; // Adjust this multiplier as needed
+
+    // Position camera
+    this.camera.position.set(center.x, center.y, center.z + distance);
+    this.camera.lookAt(center);
+    this.controls.target.copy(center);
+    this.controls.update();
+  }
+
+  private fitCameraToModel(model: THREE.Group) {
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const distance = maxDim * 2.5; // Closer view for individual models
+
+    // Position camera
+    this.camera.position.set(center.x, center.y, center.z + distance);
+    this.camera.lookAt(center);
+    this.controls.target.copy(center);
+    this.controls.update();
+  }
+
+  getModelsInfoMessage(): string {
+    if (this.viewMode === 'individual' && this.currentModels.length > 1) {
+      const currentModel = this.currentModels[this.currentModelIndex];
+      const urlParts = currentModel.url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      return `Viewing model ${this.currentModelIndex + 1} of ${this.currentModels.length}: ${fileName}`;
+    } else {
+      return `Loaded ${this.currentModels.length} model(s)`;
+    }
+  }
+
+  clearAllModels() {
+    // Remove all models from scene
+    this.currentModels.forEach(model => {
+      this.scene.remove(model.group);
+    });
+    
+    // Clear the array
+    this.currentModels = [];
+    
+    // Reset view mode and index
+    this.viewMode = 'all';
+    this.currentModelIndex = 0;
+    
+    // Reset camera
+    this.camera.position.set(0, 0, 5);
+    this.controls.target.set(0, 0, 0);
+    this.controls.update();
   }
 
   private animate() {
@@ -234,17 +454,28 @@ export class GlbViewerComponent implements OnInit {
   }
 
   resetCamera() {
-    this.camera.position.set(0, 0, 5);
-    this.controls.reset();
+    if (this.currentModels.length > 0) {
+      if (this.viewMode === 'individual') {
+        this.showIndividualModel();
+      } else {
+        this.fitCameraToModels();
+      }
+    } else {
+      this.camera.position.set(0, 0, 5);
+      this.controls.target.set(0, 0, 0);
+      this.controls.update();
+    }
   }
 
   toggleWireframe() {
-    if (this.currentModel) {
-      this.currentModel.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.material.wireframe = !child.material.wireframe;
-        }
-      });
-    }
+    this.currentModels.forEach(model => {
+      if (model.group.visible) {
+        model.group.traverse((child) => {
+          if (child instanceof THREE.Mesh) {
+            child.material.wireframe = !child.material.wireframe;
+          }
+        });
+      }
+    });
   }
 } 

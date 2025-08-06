@@ -3,28 +3,83 @@
     <nz-input-group [nzSuffix]="suffixTemplate">
       <input 
         nz-input 
-        placeholder="Enter GLB file URL" 
+        placeholder="Enter GLB file URLs (comma separated for multiple models)" 
         [(ngModel)]="glbUrl"
-        (keyup.enter)="loadGlbModel()"
+        (keyup.enter)="loadGlbModels()"
       />
     </nz-input-group>
   </div>
 
   <div class="controls-section">
-    <button nz-button nzType="primary" (click)="loadGlbModel()" [nzLoading]="isLoading">
+    <button nz-button nzType="primary" (click)="loadGlbModels()" [nzLoading]="isLoading">
       <span nz-icon nzType="eye" nzTheme="outline"></span>
-      Load Model
+      Load Models
     </button>
     
-    <button nz-button nzType="default" (click)="resetCamera()" [disabled]="!currentModel">
+    <button nz-button nzType="default" (click)="resetCamera()" [disabled]="!currentModels.length">
       <span nz-icon nzType="reload" nzTheme="outline"></span>
       Reset Camera
     </button>
     
-    <button nz-button nzType="default" (click)="toggleWireframe()" [disabled]="!currentModel">
+    <button nz-button nzType="default" (click)="toggleWireframe()" [disabled]="!currentModels.length">
       <span nz-icon nzType="border" nzTheme="outline"></span>
       Toggle Wireframe
     </button>
+
+    <button nz-button nzType="default" (click)="clearAllModels()" [disabled]="!currentModels.length">
+      <span nz-icon nzType="delete" nzTheme="outline"></span>
+      Clear All
+    </button>
+  </div>
+
+  <div class="view-mode-section" *ngIf="currentModels.length > 1">
+    <div class="view-mode-controls">
+      <button 
+        nz-button 
+        nzType="default" 
+        [class.active]="viewMode === 'all'"
+        (click)="setViewMode('all')"
+      >
+        <span nz-icon nzType="appstore" nzTheme="outline"></span>
+        All Models
+      </button>
+      
+      <button 
+        nz-button 
+        nzType="default" 
+        [class.active]="viewMode === 'individual'"
+        (click)="setViewMode('individual')"
+      >
+        <span nz-icon nzType="user" nzTheme="outline"></span>
+        Individual
+      </button>
+    </div>
+
+    <div class="navigation-controls" *ngIf="viewMode === 'individual'">
+      <button 
+        nz-button 
+        nzType="default" 
+        (click)="previousModel()" 
+        [disabled]="currentModelIndex === 0"
+      >
+        <span nz-icon nzType="left" nzTheme="outline"></span>
+        Previous
+      </button>
+      
+      <span class="model-counter">
+        {{ currentModelIndex + 1 }} / {{ currentModels.length }}
+      </span>
+      
+      <button 
+        nz-button 
+        nzType="default" 
+        (click)="nextModel()" 
+        [disabled]="currentModelIndex === currentModels.length - 1"
+      >
+        <span nz-icon nzType="right" nzTheme="outline"></span>
+        Next
+      </button>
+    </div>
   </div>
 
   <div class="error-section" *ngIf="errorMessage">
@@ -35,11 +90,19 @@
     ></nz-alert>
   </div>
 
+  <div class="models-info" *ngIf="currentModels.length > 0">
+    <nz-alert 
+      nzType="info" 
+      [nzMessage]="getModelsInfoMessage()"
+      nzShowIcon
+    ></nz-alert>
+  </div>
+
   <div class="viewer-section">
     <div class="renderer-container" #rendererContainer>
       <div class="loading-overlay" *ngIf="isLoading">
         <nz-spin nzSize="large">
-          <div class="loading-text">Loading GLB model...</div>
+          <div class="loading-text">Loading GLB models...</div>
         </nz-spin>
       </div>
     </div>
