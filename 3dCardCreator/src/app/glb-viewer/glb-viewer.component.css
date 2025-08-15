@@ -78,92 +78,6 @@
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.view-mode-section {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.view-mode-controls {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.view-mode-controls button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 120px;
-  justify-content: center;
-}
-
-.view-mode-controls ::ng-deep .ant-btn {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease !important;
-}
-
-.view-mode-controls ::ng-deep .ant-btn:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
-
-.view-mode-controls ::ng-deep .ant-btn.active {
-  background: #1890ff !important;
-  border-color: #1890ff !important;
-  color: white !important;
-}
-
-.navigation-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
-.navigation-controls button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 100px;
-  justify-content: center;
-}
-
-.navigation-controls ::ng-deep .ant-btn {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease !important;
-}
-
-.navigation-controls ::ng-deep .ant-btn:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
-
-.navigation-controls ::ng-deep .ant-btn:disabled {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: rgba(255, 255, 255, 0.3) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.model-counter {
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-  min-width: 80px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
 .error-section {
   flex-shrink: 0;
 }
@@ -257,33 +171,16 @@
     padding: 10px;
     gap: 15px;
   }
-  
+
   .controls-section {
     flex-direction: column;
   }
-  
+
   .controls-section button {
     width: 100%;
     justify-content: center;
   }
-  
-  .view-mode-controls {
-    flex-direction: column;
-  }
-  
-  .view-mode-controls button {
-    width: 100%;
-  }
-  
-  .navigation-controls {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .navigation-controls button {
-    width: 100%;
-  }
-  
+
   .renderer-container {
     height: 250px;
   }

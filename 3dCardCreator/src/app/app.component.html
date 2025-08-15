@@ -4,25 +4,20 @@
       <div class="header-content">
         <h1 class="app-title">3D Card Creator</h1>
         <div class="nav-menu">
-          <button 
-            nz-button 
-            nzType="text" 
-            [class.active]="selectedIndex === 0"
-            (click)="onMenuClick({key: 0})"
-            class="nav-button"
-          >
+          <button nz-button nzType="text" [class.active]="selectedIndex === 0" (click)="onMenuClick({key: 0})"
+            class="nav-button">
             <span nz-icon nzType="credit-card" nzTheme="outline"></span>
             <span>Card Creator</span>
           </button>
-          <button 
-            nz-button 
-            nzType="text" 
-            [class.active]="selectedIndex === 1"
-            (click)="onMenuClick({key: 1})"
-            class="nav-button"
-          >
+          <button nz-button nzType="text" [class.active]="selectedIndex === 1" (click)="onMenuClick({key: 1})"
+            class="nav-button">
             <span nz-icon nzType="eye" nzTheme="outline"></span>
             <span>GLB Viewer</span>
+          </button>
+          <button nz-button nzType="text" [class.active]="selectedIndex === 2" s (click)="onMenuClick({key: 2})"
+            class="nav-button">
+            <span nz-icon nzType="eye" nzTheme="outline"></span>
+            <span>Rotate Video Gen</span>
           </button>
         </div>
       </div>

@@ -30,12 +30,14 @@ export class AppComponent {
   ) {
     // Register icons
     this.iconService.addIcon(CreditCardOutline, EyeOutline);
-    
+
     // Set initial selected index based on current route
     this.router.events.subscribe(() => {
       const url = this.router.url;
       if (url.includes('glb-viewer')) {
         this.selectedIndex = 1;
+      } else if (url.includes('rotate-video-gen')) {
+        this.selectedIndex = 2;
       } else {
         this.selectedIndex = 0;
       }
@@ -45,11 +47,13 @@ export class AppComponent {
   onMenuClick(event: any) {
     const index = event.key;
     this.selectedIndex = index;
-    
+
     if (index === 0) {
       this.router.navigate(['/card-creator']);
     } else if (index === 1) {
       this.router.navigate(['/glb-viewer']);
+    } else if (index === 2) {
+      this.router.navigate(['/rotate-video-gen']);
     }
   }
 }
