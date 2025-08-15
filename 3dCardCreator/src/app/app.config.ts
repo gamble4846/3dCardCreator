@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { provideNzIcons } from 'ng-zorro-antd/icon';
+
 import {
   HomeOutline,
   UserOutline,
@@ -12,7 +13,13 @@ import {
   EyeOutline,
   EyeInvisibleOutline,
   FullscreenOutline,
-  ReloadOutline
+  ReloadOutline,
+  CreditCardOutline,
+  VideoCameraOutline,
+  CameraOutline,
+  SyncOutline,
+  FileOutline,
+  InfoCircleOutline
 } from '@ant-design/icons-angular/icons';
 
 import { routes } from './app.routes';
@@ -23,6 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(),
+
     provideNzIcons([
       HomeOutline,
       UserOutline,
@@ -32,7 +40,13 @@ export const appConfig: ApplicationConfig = {
       EyeOutline,
       EyeInvisibleOutline,
       FullscreenOutline,
-      ReloadOutline
+      ReloadOutline,
+      CreditCardOutline,
+      VideoCameraOutline,
+      CameraOutline,
+      SyncOutline,
+      FileOutline,
+      InfoCircleOutline
     ])
   ]
 };

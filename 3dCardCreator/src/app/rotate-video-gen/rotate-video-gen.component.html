@@ -1,1 +1,213 @@
-<p>rotate-video-gen works!</p>
+<div class="rotate-video-container">
+  <div class="header-section">
+    <h2>3D Model Rotation Video Generator</h2>
+    <p>Upload a GLB file, preview it in 3D, and export a rotating video with green screen background</p>
+  </div>
+
+  <div class="main-content">
+    <!-- File Upload Section -->
+    <nz-card title="File Upload" class="upload-section">
+      <div class="file-upload-area">
+        <input 
+          type="file" 
+          id="glbFileInput" 
+          accept=".glb,model/gltf-binary" 
+          (change)="onFileSelect($event)"
+          style="display: none;"
+        />
+        <label for="glbFileInput" class="upload-button">
+          <span nz-icon nzType="upload" nzTheme="outline"></span>
+          <span>Choose GLB File</span>
+        </label>
+        
+        <div *ngIf="selectedFile" class="file-info">
+          <span nz-icon nzType="file" nzTheme="outline"></span>
+          <span class="file-name">{{ fileName }}</span>
+          <span class="file-size">({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)</span>
+        </div>
+      </div>
+    </nz-card>
+
+    <!-- 3D Preview Section -->
+    <nz-card title="3D Preview" class="preview-section">
+      <div class="preview-container">
+        <div #canvasContainer class="canvas-container">
+          <canvas #canvas class="three-canvas"></canvas>
+          
+          <!-- Loading overlay -->
+          <div *ngIf="!isModelLoaded" class="loading-overlay">
+            <nz-spin nzSize="large">
+              <span class="loading-text">Upload a GLB file to preview</span>
+            </nz-spin>
+          </div>
+          
+          <!-- Preview controls -->
+          <div *ngIf="isModelLoaded" class="preview-controls">
+            <button nz-button nzType="primary" nzSize="small" (click)="resetCamera()">
+              <span nz-icon nzType="camera" nzTheme="outline"></span>
+              Reset Camera
+            </button>
+            <button nz-button [nzType]="videoSettings.enableAutoRotate ? 'primary' : 'default'" nzSize="small" (click)="toggleAutoRotate()">
+              <span nz-icon nzType="sync" nzTheme="outline"></span>
+              {{ videoSettings.enableAutoRotate ? 'Auto Rotate ON' : 'Auto Rotate OFF' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </nz-card>
+
+    <!-- Video Settings Section -->
+    <nz-card title="Video Export Settings" class="settings-section">
+      <div class="settings-grid">
+        <!-- Basic Settings -->
+        <div class="setting-group">
+          <h4>Basic Settings</h4>
+          
+          <div class="setting-item">
+            <label>Duration (seconds):</label>
+            <nz-input-number 
+              [(ngModel)]="videoSettings.duration" 
+              [nzMin]="1" 
+              [nzMax]="60" 
+              (ngModelChange)="onSettingsChange()"
+            ></nz-input-number>
+          </div>
+          
+          <div class="setting-item">
+            <label>FPS:</label>
+            <nz-select 
+              [(ngModel)]="videoSettings.fps" 
+              (ngModelChange)="onSettingsChange()"
+            >
+              <nz-option nzValue="24" nzLabel="24 FPS (Film)"></nz-option>
+              <nz-option nzValue="30" nzLabel="30 FPS (Standard)"></nz-option>
+              <nz-option nzValue="60" nzLabel="60 FPS (Smooth)"></nz-option>
+            </nz-select>
+          </div>
+          
+          <div class="setting-item">
+            <label>Resolution:</label>
+            <nz-select 
+              [(ngModel)]="videoSettings.resolution" 
+              (ngModelChange)="onSettingsChange()"
+            >
+              <nz-option 
+                *ngFor="let res of resolutions" 
+                [nzValue]="res.value" 
+                [nzLabel]="res.label"
+              ></nz-option>
+            </nz-select>
+          </div>
+        </div>
+
+        <!-- Rotation Settings -->
+        <div class="setting-group">
+          <h4>Rotation Settings</h4>
+          
+          <div class="setting-item">
+            <label>Rotation Speed (rotations/sec):</label>
+            <nz-slider 
+              [(ngModel)]="videoSettings.rotationSpeed" 
+              [nzMin]="0.1" 
+              [nzMax]="5" 
+              [nzStep]="0.1"
+              (ngModelChange)="onSettingsChange()"
+            ></nz-slider>
+            <span class="slider-value">{{ videoSettings.rotationSpeed }}</span>
+          </div>
+          
+          <div class="setting-item">
+            <label>Camera Distance:</label>
+            <nz-slider 
+              [(ngModel)]="videoSettings.cameraDistance" 
+              [nzMin]="2" 
+              [nzMax]="10" 
+              [nzStep]="0.5"
+              (ngModelChange)="onSettingsChange()"
+            ></nz-slider>
+            <span class="slider-value">{{ videoSettings.cameraDistance }}</span>
+          </div>
+        </div>
+
+        <!-- Visual Settings -->
+        <div class="setting-group">
+          <h4>Visual Settings</h4>
+          
+          <div class="setting-item">
+            <label>Background Color:</label>
+            <input 
+              type="color" 
+              [(ngModel)]="videoSettings.backgroundColor" 
+              (ngModelChange)="onSettingsChange()"
+              class="color-picker"
+            />
+            <span class="color-label">Green Screen</span>
+          </div>
+          
+          <div class="setting-item">
+            <label>Enable Shadows:</label>
+            <nz-switch 
+              [(ngModel)]="videoSettings.enableShadows" 
+              (ngModelChange)="onSettingsChange()"
+            ></nz-switch>
+          </div>
+          
+          <div class="setting-item">
+            <label>Quality:</label>
+            <nz-select 
+              [(ngModel)]="videoSettings.quality"
+            >
+              <nz-option 
+                *ngFor="let quality of qualityOptions" 
+                [nzValue]="quality.value" 
+                [nzLabel]="quality.label"
+              ></nz-option>
+            </nz-select>
+          </div>
+        </div>
+      </div>
+    </nz-card>
+
+    <!-- Export Section -->
+    <nz-card title="Export Video" class="export-section">
+      <div class="export-controls">
+        <button 
+          nz-button 
+          nzType="primary" 
+          nzSize="large" 
+          [disabled]="!isModelLoaded || isExporting"
+          (click)="exportVideo()"
+          class="export-button"
+        >
+          <span nz-icon nzType="video-camera" nzTheme="outline"></span>
+          <span>{{ isExporting ? 'Exporting...' : 'Export Video' }}</span>
+        </button>
+        
+        <div *ngIf="isExporting" class="export-progress">
+          <nz-progress 
+            [nzPercent]="exportProgress" 
+            [nzShowInfo]="false"
+            nzStatus="active"
+          ></nz-progress>
+          <span class="progress-text">{{ exportProgress.toFixed(1) }}% Complete</span>
+        </div>
+        
+        <div *ngIf="!isModelLoaded" class="export-note">
+          <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+          <span>Upload a GLB file to enable video export</span>
+        </div>
+      </div>
+      
+      <div class="export-info">
+        <h4>Export Information:</h4>
+        <ul>
+          <li>Video format: WebM (VP9 codec)</li>
+          <li>Background: Green screen for easy chroma keying</li>
+          <li>Rotation: Smooth 360° rotation around Y-axis</li>
+          <li>Duration: {{ videoSettings.duration }} seconds at {{ videoSettings.fps }} FPS</li>
+          <li>Resolution: {{ videoSettings.resolution.toUpperCase() }}</li>
+        </ul>
+      </div>
+    </nz-card>
+  </div>
+</div>
